@@ -1,21 +1,8 @@
 # -*- coding: utf-8 -*-
 import pysftp,zipfile,csv,io,fdb
-import sys, ConfigParser
-
-Config = ConfigParser.ConfigParser()
-
-cfg = Config.read(sys.argv[1])
-
-slogin = Config.get('sftp', 'login')
-spassword = Config.get('sftp', 'password')
-shost = 'prod-sftp.numlex.ru'
-sport = 3232
-
-database = 'adminpanel'
-dcharset = 'win1251'
-dlogin = Config.get('db', 'login')
-dpassword = Config.get('db', 'password')
-
+from known_operators import parseoperator
+from configuration import ConfigurationService
+cfg = ConfigurationService()
 
 ##CSV HAck start
 def unicode_csv_reader(unicode_csv_data, dialect=csv.excel, **kwargs):
@@ -34,7 +21,7 @@ dirs = dirs_full
 def getlast(dir=dirs_full, dry=False):
  if dry:
   return
- with pysftp.Connection(shost, port=sport, username=slogin, password=spassword) as sftp:
+ with cfg.sftp_connection() as sftp:
   sftp.chdir('numlex/'+dir)
   d = sftp.listdir()
   lastfile=d[-1]
@@ -62,7 +49,7 @@ def get_inc_from(idx,dry=False):
  if dry:
   return
  files = []
- with pysftp.Connection(shost, port=sport, username=slogin, password=spassword) as sftp:
+ with cfg.sftp_connection as sftp:
   prefix=dirs_inc[0]
   sftp.chdir('numlex/'+dirs_inc[0])
   d = sftp.listdir()
@@ -100,23 +87,10 @@ def unzip(zipname,dry=False):
 def cleantable():
  return u"delete from port_new_tmp;\n";
 
-operators={}
-operators['TELE2'] = [u'Т2 Мобайл',u'РТ-Мобайл',]
-operators['MTS'] = [u'Мобильные ТелеСистемы']
-operators['BEELINE'] = [u'ВымпелКом']
-operators['MEGAFON'] = [u'МегаФон']
-
-def replaceop(oldop):
- for opk, ops in operators.iteritems():
-  filtered = [op for op in ops if op in oldop]
-  if len(filtered)>0:
-   return opk
- return oldop
-
 def rowtostatement(row):
  op=row[1]
  num=row[0]
- opnew = replaceop(op[op.find('"')+1:op.rfind('"')])
+ opnew = parseoperator(op)
  return u"execute procedure af_port_new_insert('{0}','{1}');\n".format(num, opnew)
 # return u"insert into port_new_tmp(pphone,poperator) values ('{0}','{1}');\n".format(num, opnew)
 
@@ -137,7 +111,7 @@ inc = read_last_index()
 files, inc = get_inc_from(inc)
 #files, inc = getlast(inc)
 
-con = fdb.connect(dsn=database, user=dlogin, password=dpassword, charset=dcharset)
+con = cfg.fdb_connection()
 cur = con.cursor()
 process(files, lambda x: cur.execute(x))
 cur.execute("execute procedure af_port_new_import")
