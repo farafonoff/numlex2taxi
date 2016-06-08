@@ -49,7 +49,7 @@ def get_inc_from(idx,dry=False):
  if dry:
   return
  files = []
- with cfg.sftp_connection as sftp:
+ with cfg.sftp_connection() as sftp:
   prefix=dirs_inc[0]
   sftp.chdir('numlex/'+dirs_inc[0])
   d = sftp.listdir()

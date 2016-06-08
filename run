@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd /root/numlex/work
-python ../update.py /root/numlex/numlex.cfg
+cd /root/numlex2taxi/work
+python ../update.py /root/numlex2taxi/numlex.cfg
 
