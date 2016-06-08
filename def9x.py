@@ -1,3 +1,4 @@
+from __future__ import print_function
 import httplib2
 from lxml import html
 from known_operators import parseoperator, encoderegion
@@ -12,10 +13,8 @@ def get():
  page = html.fromstring(content)
  rows = page.xpath('body/table')[0].findall('tr')
  data = list()
- irows = iter(rows)
- irows.next()
  byregion = defaultdict(lambda :defaultdict(list))
- for row in irows:
+ for row in rows[1:]:
   datarow = [c.text.strip() for c in row.getchildren()]
   numrange = (int(datarow[0]+datarow[1]), int(datarow[0]+datarow[2]))
   byregion[datarow[5]][parseoperator(datarow[4])].append(numrange)
@@ -34,9 +33,9 @@ def joinranges(ranges):
  result.append(current)
  return result
 
-jtest = [(30, 49), (1,2), (3,4) ,(50,100), (6,10)]
-print jtest
-print joinranges([(30, 49), (1,2), (3,4) ,(50,100), (6,10)])
+#jtest = [(30, 49), (1,2), (3,4) ,(50,100), (6,10)]
+#print(jtest)
+#print(joinranges([(30, 49), (1,2), (3,4) ,(50,100), (6,10)]))
 
 cfg = ConfigurationService()
 con = cfg.fdb_connection()
@@ -48,9 +47,9 @@ for region in byregion:
  eregion = encoderegion(region)
  if eregion:
   vregion = byregion[region]
-  for operator, ranges in vregion.iteritems():
+  for operator, ranges in vregion.items():
    ranges = joinranges(ranges)
-   print region, operator, len(ranges)
+   print(region, operator, len(ranges))
    for range in ranges:
     cur.execute(u"execute procedure af_importdefcode('{0}', '{1}', '{2}', {3});".format(range[0], range[1], operator, eregion))
    

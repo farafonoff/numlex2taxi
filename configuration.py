@@ -23,7 +23,7 @@ database = defget('db','database','adminpanel')
 dcharset = 'win1251'
 dlogin = Config.get('db', 'login')
 dpassword = Config.get('db', 'password')
-print database
+print('database=', database)
 class ConfigurationService:
  def sftp_connection(self):
   return pysftp.Connection(shost, port=sport, username=slogin, password=spassword) 

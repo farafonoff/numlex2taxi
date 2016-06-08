@@ -19,7 +19,7 @@ def break_quotes(str):
   return str
 
 def encode(value, kvdict):
- for key, vlist in kvdict.iteritems():
+ for key, vlist in kvdict.items():
   filtered = [v for v in vlist if (v in value or value in v)]
   if len(filtered)>0:
    return key
