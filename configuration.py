@@ -1,5 +1,5 @@
-import sys, ConfigParser, pysftp, fdb
-Config = ConfigParser.ConfigParser()
+import sys, configparser, pysftp, fdb
+Config = configparser.ConfigParser()
 
 if len(sys.argv)>1:
  cfgpath = sys.argv[1]
@@ -11,7 +11,7 @@ cfg = Config.read(cfgpath)
 def defget(sec, var, default):
  try:
   return Config.get(sec, var)
- except ConfigParser.NoOptionError:
+ except configparser.NoOptionError:
   return default
 
 slogin = Config.get('sftp', 'login')
@@ -23,7 +23,7 @@ database = defget('db','database','adminpanel')
 dcharset = 'win1251'
 dlogin = Config.get('db', 'login')
 dpassword = Config.get('db', 'password')
-
+print database
 class ConfigurationService:
  def sftp_connection(self):
   return pysftp.Connection(shost, port=sport, username=slogin, password=spassword) 

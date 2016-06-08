@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 operators={}
-operators['TELE2'] = [u'Т2 Мобайл',u'РТ-Мобайл',]
+operators['TELE2'] = [u'Т2 Мобайл',u'РТ-Мобайл', u'Ростелеком']
 operators['MTS'] = [u'Мобильные ТелеСистемы']
-operators['BEELINE'] = [u'ВымпелКом']
+operators['BEELINE'] = [u'ВымпелКом',u'Вымпел-Ком']
 operators['MEGAFON'] = [u'МегаФон']
 
 regions={}
 regions[18] = [u'Удмурт']
-regions[59] = [u'Пермск']
+regions[59] = [u'Перм']
 
 def break_quotes(str):
  f1 = str.find('"')
@@ -18,12 +18,20 @@ def break_quotes(str):
  else:
   return str
 
+def encode(value, kvdict):
+ for key, vlist in kvdict.iteritems():
+  filtered = [v for v in vlist if (v in value or value in v)]
+  if len(filtered)>0:
+   return key
+ return None
+
 def parseoperator(oldop):
  oldop = break_quotes(oldop)
- for opk, ops in operators.iteritems():
-  filtered = [op for op in ops if op in oldop]
-  if len(filtered)>0:
-   return opk
+ encoded = encode(oldop, operators)
+ if encoded:
+  return encoded
  return oldop
 
+def encoderegion(region):
+ return encode(region, regions)
 
