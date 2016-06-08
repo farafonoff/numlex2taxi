@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /root/numlex2taxi/
+python def9x.py
+
