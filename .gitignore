@@ -1,6 +1,9 @@
 # sensitive config
 numlex.cfg
-
+#work files
+*.zip
+*.csv
+lastinc
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
