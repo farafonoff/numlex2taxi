@@ -1,0 +1,4 @@
+fdb == 1.4.1
+httplib2 == 0.9.1
+lxml == 3.4.0
+pysftp == 0.2.8
