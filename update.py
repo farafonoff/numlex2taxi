@@ -18,16 +18,20 @@ dirs_full=['Port_All_New']
 dirs_inc =['Port_Increment_New','Return_Increment_New']
 dirs = dirs_full
 
-def getlast(dir=dirs_full, dry=False):
+def getlast(dir=dirs_full[0], dry=False):
  if dry:
   return
  with cfg.sftp_connection() as sftp:
   sftp.chdir('numlex/'+dir)
   d = sftp.listdir()
   lastfile=d[-1]
-  print 'downloading {0}/{1}'.format(dir, lastfile)
+  name,exten = lastfile.split('.');
+  lastindex = int(name.split('_')[-1])
+  incdiff = lastindex*12;
+  print('last full index is {0} inc will be {1}'.format(lastindex, incdiff))
+  print('downloading {0}/{1}'.format(dir, lastfile))
   sftp.get(lastfile)
-  return ([lastfile], 11135)
+  return ([lastfile], incdiff)
 
 def read_last_index():
  try:
@@ -35,7 +39,7 @@ def read_last_index():
    return file.next().strip()
  except IOError as e:
   print e
-  return 11133
+  return 0
 
 def write_last_index(idx):
  with io.open('lastinc','w') as file:
@@ -68,14 +72,6 @@ def get_inc_from(idx,dry=False):
      nextidx=index
  return (files, nextidx)
    
- 
-#  lastfile=d[-1]
-#  print 'downloading {0}/{1}'.format(dir, lastfile)
-#  sftp.get(lastfile)
-#  return lastfile
-
-
-
 def unzip(zipname,dry=False):
  with zipfile.ZipFile(zipname) as zf:
   csv = zf.namelist()[0]
@@ -101,15 +97,30 @@ def process(files, sqlexecutor):
   with open(csvname, 'rb') as csvfile:
    reader = unicode_csv_reader(csvfile, quotechar=None, quoting=csv.QUOTE_NONE)
    reader.next() #skip header
+   lines = 0
+   line = 0
    for row in reader:
+    if (len(row)>2 and row[2]):
+     lines = int(row[2])
+     print("total rows in file: {0}".format(lines))
+    line = line+1
+    if line%100==0:
+     if lines>0:
+      print("processing line {0} of {1}".format(line,lines))
+     else:
+      print("processing line {0}".format(line))
     sqlexecutor(rowtostatement(row))
 
 def lprint(x):
  print x
 
 inc = read_last_index()
-files, inc = get_inc_from(inc)
-#files, inc = getlast(inc)
+if inc!=0:
+ print("incremental load from {0}".format(inc))
+ files, inc = get_inc_from(inc)
+else:
+ print("load from full file")
+ files, inc = getlast()
 
 con = cfg.fdb_connection()
 cur = con.cursor()
@@ -119,14 +130,4 @@ con.commit()
 
 write_last_index(inc)
 
-
-#with io.open('out.sql', 'w',encoding='utf-8') as sqlfile:
-# sqlfile.write(cleantable())
-# for dir in dirs:
-#  process(dir,lambda x: sqlfile.write(x))
-
-
-# print reader.next()[1]
-# print reader.next()
-# print reader.next()
 
