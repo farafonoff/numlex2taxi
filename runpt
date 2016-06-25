@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /root/numlex2taxi/
+python3 performtasks.py
+
