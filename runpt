@@ -1,5 +1,6 @@
 #!/bin/bash
 
 cd /root/numlex2taxi/
-python3 performtasks.py
-
+while true; do
+	python3 performtasks.py
+done;
