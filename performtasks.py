@@ -5,6 +5,7 @@ import logging
 import sys
 import signal
 import threading
+import traceback
 
 cfg = ConfigurationService()
 
@@ -17,11 +18,16 @@ query="""select TASKNAME from TASK
 		        order by LASTTIME"""
 
 def performtask(con, taskname):
-	startt = time.time()
-	cur=con.cursor()
-	cur.execute("execute procedure performtask(?)",[taskname])
-	con.commit()
-	print(taskname+" executed at "+str(time.time()-startt)+" sec")
+	try:
+		startt = time.time()
+		cur=con.cursor()
+		cur.execute("execute procedure performtask(?)",[taskname])
+		con.commit()
+		print(taskname+" executed at "+str(time.time()-startt)+" sec")
+	except:
+		print(taskname+" failed")
+		traceback.print_exc()
+		con.rollback()
 
 needexit=False
 
@@ -42,7 +48,7 @@ def cleanup():
 con = cfg.taxi_connection()
 cur = con.cursor()
 
-cur.execute("update task set isactive=2 where isactive=1");
+#cur.execute("update task set isactive=2 where isactive=1");
 def mainloop():
 	while not needexit:
 		startt = time.time()
