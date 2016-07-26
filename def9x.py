@@ -1,16 +1,15 @@
 from __future__ import print_function
-import httplib2
+import requests
 from lxml import html
 from known_operators import parseoperator, encoderegion
 from collections import defaultdict
 from configuration import ConfigurationService
 
-rsurl = 'http://www.rossvyaz.ru/docs/articles/DEF-9x.html'
+rsurl = 'https://www.rossvyaz.ru/docs/articles/DEF-9x.html'
 
 def get():
- h = httplib2.Http('.cache')
- (headers, content) = h.request(rsurl, 'GET')
- page = html.fromstring(content)
+ r = requests.get(rsurl)
+ page = html.fromstring(r.text)
  rows = page.xpath('body/table')[0].findall('tr')
  data = list()
  byregion = defaultdict(lambda :defaultdict(list))
