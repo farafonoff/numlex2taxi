@@ -178,6 +178,39 @@ begin
      (:aphone,  :aoperator, null, current_timestamp);
 end^
 
+/* added fallback region */
+create or alter procedure AF_IMPORTDEFCODE (
+    PSTART PHONEVAR,
+    PEND PHONEVAR,
+    AOPERATOR comment,
+    NREGION integer)
+as
+declare variable ARID integer;
+begin
+  select aru.arid from astoperator aor join astrule aru on aor.opid=aru.aropid
+  where aor.opname like '%'||:aoperator and aor.opregion=:nregion
+  into :arid;
+  if (:arid is null) then
+  begin
+    nregion = 9999;
+      select aru.arid from astoperator aor join astrule aru on aor.opid=aru.aropid
+      where aor.opname like '%'||:aoperator and aor.opregion=:nregion
+      into :arid;
+  end
+
+  if (:ARID is not null) then
+  begin
+    update or insert into TMP_ASTMASK (AMRULEID, ASTDEFSTART, ASTDEFEND, AMCOMMENT)
+    values (:ARID, '8'||:PSTART, '8'||:PEND, :nregion||' '||:aoperator)
+    matching (astdefstart);
+    update or insert into ASTMASK (AMRULEID, ASTDEFSTART, ASTDEFEND, AMCOMMENT)
+    values (:ARID, '8'||:PSTART, '8'||:PEND, 'DEF')
+    matching (astdefstart);
+  end
+end^
 
 
 SET TERM ; ^
+
+
+

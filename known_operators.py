@@ -5,6 +5,7 @@ operators['TELE2'] = [u'Т2 Мобайл',u'РТ-Мобайл', u'Ростеле
 operators['MTS'] = [u'Мобильные ТелеСистемы']
 operators['BEELINE'] = [u'ВымпелКом',u'Вымпел-Ком']
 operators['MEGAFON'] = [u'МегаФон']
+operators['YOTA'] = [u'Скартел']
 
 regions={}
 regions[18] = [u'Удмурт']
