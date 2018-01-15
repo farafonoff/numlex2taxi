@@ -19,24 +19,7 @@ spassword = Config.get('sftp', 'password')
 shost = 'prod-sftp.numlex.ru'
 sport = 3232
 
-database = defget('db','database','adminpanel')
-dcharset = 'win1251'
-dlogin = Config.get('db', 'login')
-dpassword = Config.get('db', 'password')
-print('database=', database)
-
-tdatabase = defget('taxi','database','taxi')
-tcharset = 'win1251'
-tlogin = Config.get('taxi', 'login')
-tpassword = Config.get('taxi', 'password')
-
-print('database=', tdatabase)
-
 class ConfigurationService:
  def sftp_connection(self):
   return pysftp.Connection(shost, port=sport, username=slogin, password=spassword) 
- def fdb_connection(self):
-  return fdb.connect(dsn=database, user=dlogin, password=dpassword, charset=dcharset)
- def taxi_connection(self):
-  return fdb.connect(dsn=tdatabase, user=tlogin, password=tpassword, charset=tcharset)
 
