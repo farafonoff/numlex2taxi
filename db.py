@@ -11,10 +11,8 @@ class Range(db.Entity):
     composite_index(rdef, rfrom)
 
 class Migrated(db.Entity):
-    rnumber = PrimaryKey(int)
+    rnumber = PrimaryKey(str)
     roperator = Required(str)
-
-class State(db.Entity)
 
 db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
 db.generate_mapping(create_tables=True)

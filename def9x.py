@@ -16,7 +16,7 @@ def loadFile():
     return myfile.read()
 
 def loadToDb():
- r = loadFile()
+ r = fetchUrl()
  soup = BeautifulSoup(r, 'html.parser')
  rows = soup.find('table').find_all('tr')
  data = list()
