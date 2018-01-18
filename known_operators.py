@@ -37,7 +37,8 @@ groups=[
   Group('MTS', None, 'mts', 500),
   Group('BEELINE', None, 'beeline', 500),
   Group('YOTA', None, 'yota', 500),
-  Group(None, None, 'backup'),
+  Group(None, None, 'backup',100),
+  Group(None, None, 'old_aster')
 ]
 
 def break_quotes(str):
