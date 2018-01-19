@@ -1,7 +1,7 @@
 from pony.orm import *
 
 db = Database()
-set_sql_debug(True)
+#set_sql_debug(True)
 
 class Route(db.Entity):
     _table_ = "cc", "routes"
@@ -25,5 +25,3 @@ def getDevices(route):
 @db_session
 def tryout():
     select(r.devices for r in Route if r.name=='mts_udm').show()
-
-print(getDevices('old_aster'))
