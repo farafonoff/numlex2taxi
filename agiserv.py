@@ -34,14 +34,18 @@ def dial_status(request):
 STATUS_CONTINUE = ['INIT', 'CONGESTION', 'CHANUNAVAIL']
 
 @asyncio.coroutine
-def dialplan(request):
+async def dialplan(request):
     number = request.headers['agi_extension']
-    dialstatus = 'INIT'
     async with threadpool():
         peers = get_devices_for_number(number)
-    pprint(peers)
-    while dialstatus in STATUS_CONTINUE:
-        yield from request.send_command('EXEC Dial Local/123@test_busy')
+    for peer in peers:
+        pprint(peer)
+        yield from request.send_command('EXEC Dial {}')
+        status = dial_status(request)
+        pprint(status)
+        if (!(status in STATUS_CONTINUE)):
+            break
+
 
 def main():
     fa_app = fast_agi.Application(loop=loop)
