@@ -19,6 +19,10 @@ spassword = Config.get('sftp', 'password')
 shost = 'prod-sftp.numlex.ru'
 sport = 3232
 
+pghost = Config.get('pg', 'host')
+pglogin = Config.get('pg', 'login')
+pgpassword = Config.get('pg', 'password')
+
 class ConfigurationService:
  def sftp_connection(self):
   return pysftp.Connection(shost, port=sport, username=slogin, password=spassword) 

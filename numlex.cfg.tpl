@@ -6,3 +6,7 @@ password = xxx
 login = db login here
 password = xxx
 
+[pg]
+host = localhost
+login = postgres
+password = postgres

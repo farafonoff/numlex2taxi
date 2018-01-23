@@ -1,5 +1,6 @@
 from pony.orm import *
 
+from configuration import pghost, pglogin, pgpassword
 db = Database()
 #set_sql_debug(True)
 
@@ -15,7 +16,7 @@ class Device(db.Entity):
     channel = Required(str)
     route = Required(Route, column="id_route")
 
-db.bind(provider='postgres', user='postgres', password='postgres', host='localhost', database='asterisk')
+db.bind(provider='postgres', user=pglogin, password=pgpassword, host=pghost, database='asterisk')
 db.generate_mapping(create_tables=False)
 
 @db_session

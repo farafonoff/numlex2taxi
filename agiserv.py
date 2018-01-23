@@ -40,17 +40,15 @@ async def dialplan(request):
         peers = get_devices_for_number(number)
     for peer in peers:
         pprint(peer)
-        yield from request.send_command('EXEC Dial {}')
+        await request.send_command('EXEC Dial {}')
         status = dial_status(request)
         pprint(status)
-        if (!(status in STATUS_CONTINUE)):
+        if ( not (status in STATUS_CONTINUE)):
             break
 
 
 def main():
     fa_app = fast_agi.Application(loop=loop)
-    fa_app.add_route('call_waiting', call_waiting)
-    fa_app.add_route('test', call_waiting)
     fa_app.add_route('dial', dialplan)
     coro = asyncio.start_server(fa_app.handler, '0.0.0.0', 4574, loop=loop)
     server = loop.run_until_complete(coro)
